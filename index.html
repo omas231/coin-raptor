@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Crypto Market Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The SPA is structured into five thematic, scrollable sections for a guided yet flexible user journey: 1) 'Introduction' for core concepts (Crypto & Blockchain), 2) 'Coin Explorer' for interactive discovery of different coin types, 3) 'Market Forces' to explain price dynamics with an interactive chart, 4) 'Nigerian Context' focusing on local relevance (Naira/Dollar, use cases), and 5) 'Risks & Next Steps' for practical advice. This non-linear, thematic approach is better for beginners than a rigid slideshow, allowing them to explore topics of interest at their own pace, fostering better understanding and engagement. -->
+    <!-- Visualization & Content Choices: 1) Coin Types (Inform/Organize): Interactive cards with JS-powered filtering instead of static slides. Goal: Allow users to actively compare coin categories. Method: HTML/CSS cards, JS for click-based filtering. Justification: More engaging than passive reading. 2) Volatility (Change): Interactive Line Chart. Goal: Visually demonstrate rapid price swings. Method: Chart.js with a dynamic dataset showing peaks and troughs. Interaction: Buttons to switch between different volatility scenarios (e.g., 'Stable' vs. 'Meme Coin'). Justification: A dynamic chart is more impactful than a static image of a rollercoaster. 3) Process Flow (Organize): Styled HTML/CSS for 'How to Start'. Goal: Present clear, actionable steps. Method: Numbered flexbox items. Justification: Clear, simple, and effective without needing complex diagrams. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #4A4A4A;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #D97706; 
+            border-bottom-color: #D97706;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .filter-btn {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .filter-btn.active {
+            background-color: #F59E0B;
+            color: white;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800">Understanding the Crypto Market</h1>
+            <p class="mt-4 text-lg text-gray-600">An Interactive Beginner's Guide to Digital Currencies</p>
+        </header>
+
+        <nav class="flex justify-center border-b border-gray-200 mb-12 flex-wrap">
+            <a href="#intro" class="nav-link active text-lg font-medium py-3 px-4 sm:px-6" data-section="intro">Introduction</a>
+            <a href="#explorer" class="nav-link text-lg font-medium py-3 px-4 sm:px-6" data-section="explorer">Coin Explorer</a>
+            <a href="#forces" class="nav-link text-lg font-medium py-3 px-4 sm:px-6" data-section="forces">Market Forces</a>
+            <a href="#context" class="nav-link text-lg font-medium py-3 px-4 sm:px-6" data-section="context">Nigerian Context</a>
+            <a href="#risks" class="nav-link text-lg font-medium py-3 px-4 sm:px-6" data-section="risks">Risks & Next Steps</a>
+        </nav>
+
+        <main>
+            <section id="intro" class="content-section active">
+                <div class="text-center mb-12">
+                     <h2 class="text-3xl font-bold text-gray-800 mb-4">The Absolute Basics</h2>
+                     <p class="max-w-3xl mx-auto text-gray-600">This section covers the foundational concepts of cryptocurrency and the technology that powers it. Understanding these basics is the first step to navigating the crypto world with confidence.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">What is Cryptocurrency?</h3>
+                        <ul class="space-y-3 text-gray-600 list-disc list-inside">
+                            <li>A digital or virtual currency secured by cryptography.</li>
+                            <li>It operates on a decentralized network, meaning it's not controlled by any single entity like a bank or government.</li>
+                            <li>Used for online transactions, as an investment, and to power new kinds of applications.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">How Blockchain Works</h3>
+                         <ul class="space-y-3 text-gray-600 list-disc list-inside">
+                            <li>The core technology behind most cryptocurrencies, acting as a "distributed public ledger."</li>
+                            <li>Transactions are grouped into "blocks" and added to a "chain" in chronological order.</li>
+                            <li>Once a block is added, it's extremely difficult to alter, which makes the entire system very secure.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section id="explorer" class="content-section">
+                <div class="text-center mb-12">
+                     <h2 class="text-3xl font-bold text-gray-800 mb-4">Explore Different Types of Coins</h2>
+                     <p class="max-w-3xl mx-auto text-gray-600">The crypto market is vast and diverse. Not all coins are created equal. This section allows you to filter and learn about the major categories of cryptocurrencies, from the market leaders to community-driven tokens.</p>
+                </div>
+                <div class="flex justify-center space-x-2 sm:space-x-4 mb-8 flex-wrap">
+                    <button class="filter-btn active bg-gray-200 text-gray-700 py-2 px-4 rounded-full font-medium" data-filter="all">All Types</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 py-2 px-4 rounded-full font-medium" data-filter="titan">Titans</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 py-2 px-4 rounded-full font-medium" data-filter="altcoin">Altcoins</button>
+                    <button class="filter-btn bg-gray-200 text-gray-700 py-2 px-4 rounded-full font-medium" data-filter="meme">Meme Coins</button>
+                </div>
+                <div id="coin-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+            </section>
+
+            <section id="forces" class="content-section">
+                 <div class="text-center mb-12">
+                     <h2 class="text-3xl font-bold text-gray-800 mb-4">Understanding Market Forces</h2>
+                     <p class="max-w-3xl mx-auto text-gray-600">Crypto prices are famously volatile. Here, you can explore the key factors that cause prices to rise and fall, and see a visual representation of how dramatic these price swings can be.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-6 mb-12">
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                        <h4 class="font-bold text-lg mb-2">Supply & Demand</h4>
+                        <p class="text-sm">The fundamental driver. Limited supply with high demand leads to higher prices, and vice-versa.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                        <h4 class="font-bold text-lg mb-2">Market Sentiment</h4>
+                        <p class="text-sm">News, social media hype (FOMO), and influencer opinions can cause rapid price changes.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                        <h4 class="font-bold text-lg mb-2">Utility & Technology</h4>
+                        <p class="text-sm">The real-world usefulness and innovation of a coin's technology can drive its long-term value.</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                    <h3 class="text-2xl font-bold text-center mb-4">The Roller Coaster of Volatility</h3>
+                    <div class="chart-container">
+                        <canvas id="volatilityChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="context" class="content-section">
+                <div class="text-center mb-12">
+                     <h2 class="text-3xl font-bold text-gray-800 mb-4">The Nigerian Context</h2>
+                     <p class="max-w-3xl mx-auto text-gray-600">Cryptocurrency has a unique and significant role in Nigeria. This section explores the relationship between crypto and the local economy, from exchange rates to its use as a tool for financial empowerment.</p>
+                </div>
+                 <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Naira vs. The Dollar</h3>
+                        <p class="text-gray-600 mb-4">Most crypto is priced in US Dollars. This means the Naira/Dollar exchange rate directly impacts the cost for Nigerians:</p>
+                        <ul class="space-y-3 text-gray-600 list-disc list-inside">
+                            <li><b>Weaker Naira:</b> Makes it more expensive to buy crypto.</li>
+                            <li><b>Stronger Naira:</b> Makes it cheaper to buy crypto.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">A Financial Lifeline?</h3>
+                        <p class="text-gray-600 mb-4">Many Nigerians use crypto to:</p>
+                        <ul class="space-y-3 text-gray-600 list-disc list-inside">
+                            <li>Bypass traditional banking challenges and high fees.</li>
+                            <li>Receive money from abroad (remittances) faster and cheaper.</li>
+                            <li>Use stablecoins (pegged to the dollar) to protect savings from Naira inflation.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="risks" class="content-section">
+                 <div class="text-center mb-12">
+                     <h2 class="text-3xl font-bold text-gray-800 mb-4">Be Smart, Be Safe</h2>
+                     <p class="max-w-3xl mx-auto text-gray-600">While exciting, the crypto world has its risks. Understanding them is key to protecting yourself. Here are the most important risks to be aware of and the basic steps to get started safely.</p>
+                </div>
+                <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg mb-12">
+                    <h3 class="text-xl font-bold text-red-800 mb-2">Major Risks to Consider</h3>
+                    <ul class="list-disc list-inside text-red-700 space-y-2">
+                        <li><b>Extreme Volatility:</b> Prices can drop dramatically in a short time. Only invest what you can afford to lose.</li>
+                        <li><b>Scams & Fraud:</b> Beware of "get-rich-quick" schemes, fake projects, and phishing attempts to steal your information.</li>
+                        <li><b>Security:</b> You are your own bank. You must protect your wallet's private keys. If you lose them, you lose your funds.</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-md border border-gray-100">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">How to Get Started Safely</h3>
+                    <div class="flex flex-col md:flex-row justify-around items-center text-center gap-8">
+                        <div class="flex flex-col items-center">
+                            <div class="bg-amber-100 text-amber-600 rounded-full h-16 w-16 flex items-center justify-center text-2xl font-bold mb-3">1</div>
+                            <h4 class="font-bold text-lg">Do Your Research</h4>
+                            <p class="text-sm max-w-xs">Study a project before investing. Understand its purpose and technology.</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="bg-amber-100 text-amber-600 rounded-full h-16 w-16 flex items-center justify-center text-2xl font-bold mb-3">2</div>
+                            <h4 class="font-bold text-lg">Use Reputable Exchanges</h4>
+                            <p class="text-sm max-w-xs">Start with well-known platforms like Binance, Bybit, or Luno.</p>
+                        </div>
+                        <div class="flex flex-col items-center">
+                           <div class="bg-amber-100 text-amber-600 rounded-full h-16 w-16 flex items-center justify-center text-2xl font-bold mb-3">3</div>
+                            <h4 class="font-bold text-lg">Start Small</h4>
+                            <p class="text-sm max-w-xs">Begin with a small amount of money that you are comfortable losing.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.content-section');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const coinGrid = document.getElementById('coin-grid');
+
+            const coinData = [
+                { name: 'Bitcoin (BTC)', category: 'titan', description: 'The first and most well-known cryptocurrency, often called "digital gold" or a store of value.' },
+                { name: 'Ethereum (ETH)', category: 'titan', description: 'A platform for smart contracts and decentralized applications (dApps). More than just a currency.' },
+                { name: 'Solana (SOL)', category: 'altcoin', description: 'An "altcoin" known for its high speed and low transaction costs, aiming to compete with Ethereum.' },
+                { name: 'Binance Coin (BNB)', category: 'altcoin', description: 'The native token of the Binance ecosystem, used for trading fees, and participating in token sales.' },
+                { name: 'Toncoin (TON)', category: 'altcoin', description: 'An altcoin linked to the Telegram messaging app, designed for fast and cheap transactions.' },
+                { name: 'Dogecoin (DOGE)', category: 'meme', description: 'The original "meme coin" based on an internet joke. Its value is driven by community hype.' },
+                { name: 'Notcoin (NOT)', category: 'meme', description: 'A recent phenomenon that started as a viral "tap-to-earn" game on Telegram, now a tradable token.' },
+                { name: 'Shiba Inu (SHIB)', category: 'meme', description: 'Another popular dog-themed meme coin, created as an "experiment in decentralized spontaneous community building".' }
+            ];
+
+            function renderCoins(filter = 'all') {
+                coinGrid.innerHTML = '';
+                const filteredCoins = filter === 'all' ? coinData : coinData.filter(coin => coin.category === filter);
+                
+                filteredCoins.forEach(coin => {
+                    let categoryColor = '';
+                    let categoryName = '';
+                    switch (coin.category) {
+                        case 'titan':
+                            categoryColor = 'bg-blue-100 text-blue-800';
+                            categoryName = 'Titan';
+                            break;
+                        case 'altcoin':
+                            categoryColor = 'bg-green-100 text-green-800';
+                            categoryName = 'Altcoin';
+                            break;
+                        case 'meme':
+                            categoryColor = 'bg-yellow-100 text-yellow-800';
+                            categoryName = 'Meme Coin';
+                            break;
+                    }
+
+                    const coinCard = `
+                        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 transform hover:-translate-y-1 transition-transform duration-300">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="font-bold text-xl text-gray-800">${coin.name}</h4>
+                                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${categoryColor}">${categoryName}</span>
+                            </div>
+                            <p class="text-gray-600">${coin.description}</p>
+                        </div>
+                    `;
+                    coinGrid.innerHTML += coinCard;
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('data-section');
+
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+
+                    sections.forEach(s => s.classList.remove('active'));
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    const filter = this.getAttribute('data-filter');
+                    renderCoins(filter);
+                });
+            });
+
+            renderCoins();
+
+            const ctx = document.getElementById('volatilityChart').getContext('2d');
+            const volatilityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Crypto Asset Price (USD)',
+                        data: [100, 120, 110, 150, 250, 180, 210, 350, 280, 250, 150, 180],
+                        borderColor: '#F59E0B',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
